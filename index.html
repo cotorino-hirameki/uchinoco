@@ -1,49 +1,77 @@
-  <!-- 診断結果 -->
-  <div id="result" style="display:none; text-align:center; padding: 20px;">
-    <!-- ① SUZURI 用イラスト -->
-    <img id="result-img-suzuri"
-         src="assets/ufo_normal_orange_male.png"
-         alt="通信中！小型UFOタイプ"
-         style="max-width:100%; border-radius:8px; margin-bottom:16px;" />
-
-    <!-- ② プレビュー（水印入り） -->
-    <img id="result-img-preview"
-         src="assets/watermark_ufo_normal_orange_male.png"
-         alt="通信中！小型UFOタイプ プレビュー"
-         style="max-width:100%; border-radius:8px; margin-bottom:16px;" />
-
-    <p style="font-size:24px; font-weight:700; margin:16px 0 8px;">通信中！小型UFOタイプ</p>
-    <p style="font-size:16px; color:#777; margin-bottom:16px;">
-      突然フリーズしたり、遠くを見つめたり…まるでどこかとつながってる！？目が離せない不思議ちゃん。  
-      あなたに寄り添う、小さな謎の飛行体です。
-    </p>
-
-    <a href="https://suzuri.jp/cotorino_hirameki/designs/17368866"
-       class="btn-link"
-       target="_blank"
-       rel="noopener"
-       style="display:inline-block;
-              padding:12px 24px;
-              background:#FF7F00;
-              color:#fff;
-              border-radius:8px;
-              text-decoration:none;
-              font-weight:700;
-              margin-bottom:24px;">
-      グッズを見る
-    </a>
-
-    <button id="btn-restart"
-            style="display:block;
-                   margin:0 auto;
-                   padding:14px 0;
-                   width:100%;
-                   max-width:360px;
-                   border:2px solid #FF7F00;
-                   border-radius:999px;
-                   background:transparent;
-                   color:#FF7F00;
-                   font-weight:700;">
-      もう一度診断する
-    </button>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>うちのこ診断 オカメインコ編</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Zen Maru Gothic', sans-serif; background: #f7f7f7; color: #333; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    h2 { text-align: center; font-size: 20px; font-weight: 400; color: #555; margin-bottom: 24px; }
+    .question { font-size: 22px; text-align: center; margin: 24px 0 16px; }
+    .options { display: flex; flex-direction: column; gap: 12px; margin: 0 auto; max-width: 360px; }
+    .btn-option { padding: 14px; font-size: 18px; font-weight: 700; border-radius: 999px; cursor: pointer; border: none; text-align: center; background: #FFB74D; color: #fff; transition: background-color 0.2s; }
+    .btn-option:hover { background: #FFA726; }
+    .btn-option.selected { background: #FFA726; border: 2px solid #E65100; }
+    .btn-yes { background: #FF7F00; color: #fff; }
+    .btn-no { background: #fff; color: #FF7F00; border: 2px solid #FF7F00; }
+    .btn-submit { margin-top: 24px; display: block; width: 100%; max-width: 360px; padding: 14px; font-size: 18px; font-weight: 700; border-radius: 999px; border: none; background: #FF7F00; color: #fff; text-align: center; }
+    .btn-restart { margin-top: 24px; display: block; width: 100%; max-width: 360px; padding: 14px; font-size: 18px; font-weight: 700; border-radius: 999px; border: 2px solid #FF7F00; background: transparent; color: #FF7F00; text-align: center; }
+    .result img { max-width: 100%; border-radius: 8px; margin-top: 12px; }
+    .result-pre { font-size: 16px; color: #777; margin-top: 16px; }
+    .result-name { font-size: 24px; font-weight: 700; margin: 8px 0; }
+    .subtitle { font-size: 18px; color: #555; margin-bottom: 16px; }
+    .description { font-size: 16px; line-height: 1.5; margin-bottom: 16px; white-space: pre-wrap; }
+    .suzuri-preview { width: 100%; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; color: #777; font-size: 18px; border-radius: 8px; margin: 16px 0; }
+    .presentation { font-size: 16px; margin: 16px 0; }
+    .note { font-size: 14px; color: #999; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>うちのこ診断</h1>
+    <h2>オカメインコ編</h2>
+    <!-- 質問チャート -->
+    <div id="step-q1"><div class="question" id="question">新しいおもちゃを見ると、すぐに遊びに行く？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q2" style="display:none;"><div class="question">カーテンレール、ドア上、時計の上…いろんなところで遊んでる？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q3" style="display:none;"><div class="question">ゆっくりのしのし歩く？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q5" style="display:none;"><div class="question">どこに行っても、結局あなたの肩に戻ってくる？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q4" style="display:none;"><div class="question">床にあるものも、ついついチェックしに行く？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q9" style="display:none;"><div class="question">ケージの中で、よく動き回っている？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q6" style="display:none;"><div class="question">どこかをぼんやり眺めて停止してる？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <div id="step-q7" style="display:none;"><div class="question">おこっても本気で噛まない？</div><div class="options"><button class="btn-option btn-yes">はい</button><button class="btn-option btn-no">いいえ</button></div></div>
+    <!-- 情報入力 -->
+    <div id="step-info" style="display:none;"><div class="question">羽の色は？</div><div class="options" id="feather-options"><button class="btn-option" data-value="ノーマル">ノーマル</button><button class="btn-option" data-value="ルチノー">ルチノー</button><button class="btn-option" data-value="パール">パール</button><button class="btn-option" data-value="パイド">パイド</button><button class="btn-option" data-value="シナモン">シナモン</button></div><div class="question">ほっぺの色は？</div><div class="options" id="cheek-options"><button class="btn-option" data-value="オレンジ">オレンジ</button><button class="btn-option" data-value="きいろ">きいろ</button><button class="btn-option" data-value="なし">なし (ホワイトフェイス)</button></div><div class="question">性別は？</div><div class="options" id="gender-options"><button class="btn-option" data-value="男の子">男の子</button><button class="btn-option" data-value="女の子">女の子</button><button class="btn-option" data-value="わからない">わからない</button></div><button id="btn-submit-info" class="btn-submit">結果を見る</button></div>
+    <!-- 結果 -->
+    <div id="result" class="result" style="display:none;"><img id="result-img-suzuri" src="" alt="診断イラスト"><img id="result-img-preview" src="" alt="プレビューイラスト"><p class="result-pre">うちのこは...</p><p class="result-name" id="type-name"></p><p class="subtitle" id="subtitle"></p><p class="description" id="description"></p><div class="suzuri-preview">SUZURIイメージ</div><p class="presentation"><span id="type-name2"></span>のグッズをご用意しました！<br>羽の色、ほっぺの色、性格にぴったりのグッズはuchinocosだけ！</p><a id="suzuri-link" class="btn-link" href="#" target="_blank" rel="noopener">グッズを見る</a><p class="note">イラストは、オカメインコを飼っている現役デザイナーが、1枚1枚真心込めて手書きしています。</p><button id="btn-restart" class="btn-restart">もう一度診断する</button></div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user={feather:'',cheek:'',gender:''};
+      const suzuriUrls={};
+      const results={
+        '小型UFO':{name:'通信中！小型UFOタイプ',subtitle:'ミステリアスタイプ',text:'突然フリーズしたり、遠くを見つめている…まるでどこかと繋がっている！？目が離せない不思議ちゃん。'},
+        'ぽよぽよ和尚':{name:'ほっこり ぽよぽよ 和尚タイプ',subtitle:'おだやかタイプ',text:'いつものんびり、周りを和ませるおっとりキャラです。'},
+        'わんぱく番長':{name:'今日も元気だ！わんぱく番長タイプ',subtitle:'エネルギッシュタイプ',text:'元気いっぱいでやんちゃ！みんなを笑顔にするパワフルキャラです。'},
+        '探検隊':{name:'すすめ！オカメ探検隊タイプ',subtitle:'冒険心あふれるタイプ',text:'好奇心旺盛でどこへでも行く探検家。新しい発見を求めて冒険を続けます。'}
+      };
+      let current='q1',resultKey='';
+      const showStep=id=>{['step-q1','step-q2','step-q3','step-q5','step-q4','step-q9','step-q6','step-q7','step-info','result'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');});};
+      const questions={q1:'新しいおもちゃを見ると、すぐに遊びに行く？',q2:'カーテンレール、ドア上、時計の上…いろんなところで遊んでる？',q3:'ゆっくりのしのし歩く？',q5:'どこに行っても、結局あなたの肩に戻ってくる？',q4:'床にあるものも、ついついチェックしに行く？',q9:'ケージの中で、よく動き回っている？',q6:'どこかをぼんやり眺めて停止してる？',q7:'おこっても本気で噛まない？'};
+      const qEl=document.getElementById('question');
+      const han=(yes)=>{switch(current){case 'q1':current=yes?'q2':'q6';break;case 'q2':current=yes?'q3':'q9';break;case 'q3':current=yes?'q5':'q4';break;case 'q5':resultKey='小型UFO';showStep('step-info');return;case 'q4':resultKey=yes?'わんぱく番長':'探検隊';showStep('step-info');return;case 'q9':resultKey=yes?'探検隊':'ぽよぽよ和尚';showStep('step-info');return;case 'q6':if(yes){resultKey='小型UFO';showStep('step-info');return;}current='q7';break;case 'q7':resultKey=yes?'ぽよぽよ和尚':'わんぱく番長';showStep('step-info');return;}qEl.textContent=questions[current];showStep(`step-${current}`);};
+      document.querySelectorAll('.btn-yes').forEach(b=>b.addEventListener('click',()=>han(true)));
+      document.querySelectorAll('.btn-no').forEach(b=>b.addEventListener('click',()=>han(false)));
+      ['feather','cheek','gender'].forEach(key=>{
+        document.getElementById(`${key}-options`).querySelectorAll('.btn-option').forEach(btn=>btn.addEventListener('click',()=>{user[key]=key==='gender'&&btn.dataset.value==='わからない'?'男の子':btn.dataset.value;document.querySelectorAll(`#${key}-options .btn-option`).forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');}));
+      });
+      document.getElementById('btn-submit-info').addEventListener('click',()=>{if(user.feather&&user.cheek&&user.gender){const r=results[resultKey];document.getElementById('result-img-suzuri').src=`assets/ufo_normal_orange_male.png`;document.getElementById('result-img-preview').src=`assets/watermark_ufo_normal_orange_male.png`;document.getElementById('type-name').textContent=r.name;document.getElementById('subtitle').textContent=r.subtitle;document.getElementById('description').textContent=r.text;document.getElementById('type-name2').textContent=r.name;document.getElementById('suzuri-link').href=suzuriUrls['ufo_normal_orange_male']||'#';showStep('result');}});
+      document.getElementById('btn-restart').addEventListener('click',()=>location.reload());
+      qEl.textContent=questions[current];showStep('step-q1');
+    });
+  </script>
+</body>
+</html>
