@@ -1,155 +1,49 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>うちの子性格診断チャート</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; color: #333; margin: 0; padding: 0; }
-    .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h1 { text-align: center; color: #555; }
-    .question { font-size: 1.1em; margin: 20px 0; }
-    .btn-group { display: flex; justify-content: space-around; margin: 20px 0; }
-    .btn { background: #2c7efc; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 1em; }
-    .btn:hover { background: #1a5fc2; }
-    .result { text-align: center; }
-    .type-name { font-size: 1.5em; margin-bottom: 10px; }
-    .subtitle { font-size: 1.1em; color: #777; margin-bottom: 20px; }
-    .description { font-size: 1em; line-height: 1.5; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>うちの子性格診断</h1>
-    <div id="quiz">
-      <div class="question" id="question"></div>
-      <div class="btn-group">
-        <button class="btn" id="btn-yes">はい</button>
-        <button class="btn" id="btn-no">いいえ</button>
-      </div>
-    </div>
-    <div id="result" class="result" style="display:none;">
-      <div class="type-name" id="type-name"></div>
-      <div class="subtitle" id="subtitle"></div>
-      <div class="description" id="description"></div>
-    </div>
+  <!-- 診断結果 -->
+  <div id="result" style="display:none; text-align:center; padding: 20px;">
+    <!-- ① SUZURI 用イラスト -->
+    <img id="result-img-suzuri"
+         src="assets/ufo_normal_orange_male.png"
+         alt="通信中！小型UFOタイプ"
+         style="max-width:100%; border-radius:8px; margin-bottom:16px;" />
+
+    <!-- ② プレビュー（水印入り） -->
+    <img id="result-img-preview"
+         src="assets/watermark_ufo_normal_orange_male.png"
+         alt="通信中！小型UFOタイプ プレビュー"
+         style="max-width:100%; border-radius:8px; margin-bottom:16px;" />
+
+    <p style="font-size:24px; font-weight:700; margin:16px 0 8px;">通信中！小型UFOタイプ</p>
+    <p style="font-size:16px; color:#777; margin-bottom:16px;">
+      突然フリーズしたり、遠くを見つめたり…まるでどこかとつながってる！？目が離せない不思議ちゃん。  
+      あなたに寄り添う、小さな謎の飛行体です。
+    </p>
+
+    <a href="https://suzuri.jp/cotorino_hirameki/designs/17368866"
+       class="btn-link"
+       target="_blank"
+       rel="noopener"
+       style="display:inline-block;
+              padding:12px 24px;
+              background:#FF7F00;
+              color:#fff;
+              border-radius:8px;
+              text-decoration:none;
+              font-weight:700;
+              margin-bottom:24px;">
+      グッズを見る
+    </a>
+
+    <button id="btn-restart"
+            style="display:block;
+                   margin:0 auto;
+                   padding:14px 0;
+                   width:100%;
+                   max-width:360px;
+                   border:2px solid #FF7F00;
+                   border-radius:999px;
+                   background:transparent;
+                   color:#FF7F00;
+                   font-weight:700;">
+      もう一度診断する
+    </button>
   </div>
-
-  <script>
-    const questions = [
-      { text: "Q1. 飼い主や人に自分から寄ってくるタイプですか？" },
-      { text: "Q2. 嬉しいときや不満があるとき、すぐ態度や表情に出ますか？" },
-      { text: "Q3. ひとりで静かに遊んだり、じっと観察してる時間が多いですか？" },
-      { text: "Q4. 近くに来ても、じーっとこちらを見て様子をうかがうことが多いですか？" },
-      { text: "Q5. 突然の音や手の動きに、びくっと驚くことが多いですか？" }
-    ];
-
-    const results = {
-      "アイドル_low": {
-        name: "💛 自信満々のご機嫌アイドル",
-        subtitle: "ビビり度：低",
-        text: "飼い主が大好きで、常にハッピーオーラ全開！大胆な性格で驚きに強いのが特徴です。"  
-      },
-      "アイドル_high": {
-        name: "💛 寄ってきて甘えるけど、実は繊細なびびりアイドル",
-        subtitle: "ビビり度：高",
-        text: "甘えたアピールは得意だけど、ちょっとした音に驚いちゃう繊細な一面もあります。"  
-      },
-      "ツンデレ_low": {
-        name: "🦉 クールで肝っ玉の据わったセンパイ",
-        subtitle: "ビビり度：低",
-        text: "近くにいるけど余裕のツンデレ先輩。大胆で頼れる性格です。"  
-      },
-      "ツンデレ_high": {
-        name: "🦉 慎重なツンデレ先輩",
-        subtitle: "ビビり度：高",
-        text: "そばにいると心強いけど、実はちょっと怖がり。絶妙な距離感が魅力です。"  
-      },
-      "探究者_low": {
-        name: "🪶 観察大好き！おっとり探究者",
-        subtitle: "ビビり度：低",
-        text: "静かに遊ぶ名人で、落ち着いて周囲を観察しています。冷静沈着なタイプ。"  
-      },
-      "探究者_high": {
-        name: "🪶 観察タイプのビビりちゃん",
-        subtitle: "ビビり度：高",
-        text: "ひとり遊びが得意だけど、意外と臆病。小さな音にも敏感に反応します。"  
-      },
-      "アーティスト_low": {
-        name: "🎨 マイワールド全開！自由な魂",
-        subtitle: "ビビり度：低",
-        text: "感情表現が豊かで、自分のペースを大切にするアーティスト肌です。"  
-      },
-      "アーティスト_high": {
-        name: "🎨 感情派ビビり芸術家",
-        subtitle: "ビビり度：高",
-        text: "表現豊かな芸術肌だけど、繊細なハートも併せ持つ情熱家です。"  
-      }
-    };
-
-    let step = 0;
-    let ans = [];
-
-    const questionEl = document.getElementById('question');
-    const btnYes = document.getElementById('btn-yes');
-    const btnNo = document.getElementById('btn-no');
-    const quizEl = document.getElementById('quiz');
-    const resultEl = document.getElementById('result');
-    const typeNameEl = document.getElementById('type-name');
-    const subtitleEl = document.getElementById('subtitle');
-    const descEl = document.getElementById('description');
-
-    function showQuestion() {
-      questionEl.textContent = questions[step].text;
-    }
-
-    function showResult() {
-      // 判定ロジック
-      let type;
-      if (ans[0]) {
-        // Q1 yes
-        type = ans[1] ? 'アイドル' : 'ツンデレ';
-      } else {
-        // Q1 no
-        type = ans[2] ? '探究者' : 'アーティスト';
-      }
-      // Q4 上書きロジック
-      if (ans[3]) type = 'ツンデレ';
-      // ビビり度
-      const fear = ans[4] ? 'high' : 'low';
-      const key = `${type}_${fear}`;
-      const r = results[key];
-
-      typeNameEl.textContent = r.name;
-      subtitleEl.textContent = r.subtitle;
-      descEl.textContent = r.text;
-
-      quizEl.style.display = 'none';
-      resultEl.style.display = 'block';
-    }
-
-    btnYes.addEventListener('click', () => {
-      ans[step] = true;
-      step++;
-      if (step < questions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
-    });
-
-    btnNo.addEventListener('click', () => {
-      ans[step] = false;
-      step++;
-      if (step < questions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
-    });
-
-    // 初期化
-    showQuestion();
-  </script>
-</body>
-</html>
